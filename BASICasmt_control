@@ -1,5 +1,8 @@
 #!/bin/sh
 
+START_LOG=/opt/appName/logs/start.log
+STOP_LOG=/opt/appName/logs/stop.log
+
 ### START Methods ###
 start_app1() {
 	echo "Starting app1"
@@ -45,6 +48,7 @@ usage () {
 
 case $1 in
 start)
+  LOG=$START_LOG
   case $2 in
     app1)
       $1_$2
