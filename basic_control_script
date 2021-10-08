@@ -1,0 +1,74 @@
+#!/bin/bash
+#Let's redirect all the output to the terminal AND also to a log file (/bin/bash needed)
+exec > >(tee -ia /opt/apps/APPLICATIONNAME/logs/controlScript.log)
+
+### START Methods ###
+start_app1() {
+	echo "Starting app1"
+}
+start_app2() {
+	echo "Starting app2"
+}
+start_all() {
+	echo "Starting ALL"
+	start_app1
+	start_app2
+}
+
+### STOP Methods ###
+stop_app1() {
+	echo "Stopping app1"
+}
+stop_app2() {
+	echo "Stopping app2"
+}
+stop_all() {
+	echo "Stopping ALL"
+	stop_app1
+	stop_app2
+}
+
+### CHECK Methods ###
+getprocstat() {
+  export reqps=`ps -ef | grep "PROCESSTOCHECKHERE" | wc -l`
+}
+check() {
+  getprocstat
+  if [[ "$reqps" -gt 12 ]]; then
+    echo "There are more processes running than expected"
+  elif [[ "$reqps" -eq 12 ]]; then
+    echo "App is up"
+  elif [[ "$reqps" -le 2 ]];then
+    echo "App is down"
+  else
+    echo "There are less processes running than expected"
+  fi
+}
+
+### MENU ###
+echo "--- `/bin/date` ---"
+usage() {
+   echo "Usage: $0 {start|stop} {app1|app2|all}"
+   exit 1
+}
+
+case $1 in
+start | stop)
+  case $2 in
+    app1 | app2 | all)
+      $1_$2
+      ;;
+    *)
+      usage
+      ;;
+    esac
+  ;;
+check)
+  $1
+  ;;
+*)
+  usage
+  ;;
+esac
+
+exit 0
